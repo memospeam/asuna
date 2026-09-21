@@ -1,0 +1,14 @@
+# OS / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
+
+# Accidental copies of a host project
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
