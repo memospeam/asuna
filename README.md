@@ -1,42 +1,62 @@
 # Asuna
 
-SDET agent + skills for Cursor and Claude Code. Install into any TypeScript project that uses **Playwright**, **Vitest**, or both.
+SDET agent + skills for **Cursor** and **Claude Code**. Drop it into any TypeScript project that uses Playwright, Vitest, or both.
 
-Asuna writes and edits tests in the host repo's existing style. It does not invent a parallel framework.
+Asuna writes tests in the host repo's existing style. It does not invent a parallel framework.
+
+## Should this repo be public?
+
+Yes, if other people should be able to install it. A public repo means a one-line install works without a GitHub invite. There are no secrets here — only agent instructions and a MIT license.
 
 ## Install
 
-From this repo:
+Pick one.
+
+### This project (share with the team)
+
+From the project root:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash
+```
+
+Then commit `.cursor/` and `.claude/` so everyone on the repo gets Asuna.
+
+### This machine (every project)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash -s -- --global
+```
+
+Copies into `~/.cursor/` and `~/.claude/`. No per-repo commit needed.
+
+### Already cloned
 
 ```bash
 ./install.sh /path/to/your-project
+./install.sh --global
 ```
 
-From GitHub without cloning first:
+Existing files are skipped. Add `--force` to overwrite. Add `--templates` on a project install to also drop a Playwright 2-layer POM scaffold (skipped if `e2e/` already exists).
+
+### Skills CLI (skills only)
 
 ```bash
-git clone git@github.com:memospeam/asuna.git /tmp/asuna
-/tmp/asuna/install.sh /path/to/your-project
+npx skills add memospeam/asuna --all -y
+npx skills add memospeam/asuna --all -g -y   # user-wide
 ```
 
-Copies:
+This installs the skills, not the `@asuna` agent file. Prefer `install.sh` if you want both.
 
-| Source | Destination |
-|--------|-------------|
-| `agents/asuna.md` | `.cursor/agents/asuna.md` and `.claude/agents/asuna.md` |
-| `skills/asuna-*` | `.cursor/skills/` and `.claude/skills/` |
+## After install
 
-Existing files are skipped. Use `--force` to overwrite.
+In Cursor, start a new chat and mention **asuna** (or `@asuna`):
 
-Optional Playwright 2-layer POM scaffold (does not overwrite existing `e2e/`):
-
-```bash
-./install.sh --templates /path/to/your-project
 ```
-
-Then in Cursor, mention **asuna** (or `@asuna`) when you want tests written.
-
-## What you get
+@asuna เพิ่ม test สำหรับหน้า login
+@asuna plan coverage จากลิสต์นี้
+@asuna ทำไมเคสนี้ fail
+```
 
 | Skill | Use when |
 |-------|----------|
@@ -47,28 +67,28 @@ Then in Cursor, mention **asuna** (or `@asuna`) when you want tests written.
 | `asuna-review` | Review a test diff / PR |
 | `asuna-run` | Run the suite |
 
-## Stack detection
+## How Asuna picks a stack
 
-On install into a host project, Asuna reads that project:
+It reads the **host** project. Nothing here is Pokémon- or SET-specific.
 
 1. `playwright.config.*` or `e2e/` → Playwright POM
 2. `vitest.config.*` or colocated `*.test.ts` → Vitest
-3. Both → use the stack the user named; default to existing neighbouring tests
+3. Both → follow what you asked for; otherwise copy the neighbouring test
 
 Core rule: **ห้ามคาดเดา** — read the implementation and sibling tests before writing. If source does not answer, ask.
 
-## Layout of this repo
+## Layout
 
 ```
-agents/asuna.md
+agents/asuna.md              # Cursor + Claude agent
 skills/asuna-tests/          # conventions + workflow
 skills/asuna-plan/
 skills/asuna-iterate/
 skills/asuna-debug/
 skills/asuna-review/
 skills/asuna-run/
-templates/playwright/        # optional 2-layer POM starter
+templates/playwright/        # optional POM starter
 install.sh
 ```
 
-Host-project specifics (routes, helpers, card names, APIs) stay in the host repo, not here.
+Host-project specifics (routes, helpers, APIs) stay in the host repo.
