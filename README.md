@@ -1,94 +1,74 @@
 # Asuna
 
-SDET agent + skills for **Cursor** and **Claude Code**. Drop it into any TypeScript project that uses Playwright, Vitest, or both.
+ช่วยเขียนเทสใน Cursor / Claude Code ให้โปรเจกต์ที่ใช้ **Playwright** หรือ **Vitest**
 
-Asuna writes tests in the host repo's existing style. It does not invent a parallel framework.
+อ่านโค้ดกับเทสที่มีอยู่แล้ว แล้วเขียนตามสไตล์นั้น ไม่เดา ไม่สร้าง framework ใหม่
 
-## Should this repo be public?
+## ติดตั้ง
 
-Yes, if other people should be able to install it. A public repo means a one-line install works without a GitHub invite. There are no secrets here — only agent instructions and a MIT license.
-
-## Install
-
-Pick one.
-
-### This project (share with the team)
-
-From the project root:
+เปิดเทอร์มินัล **ในโฟลเดอร์โปรเจกต์** แล้ววางคำสั่งนี้:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash
 ```
 
-Then commit `.cursor/` and `.claude/` so everyone on the repo gets Asuna.
+เสร็จแล้ว commit โฟลเดอร์ `.cursor/` กับ `.claude/` เพื่อให้คนในทีมได้ใช้ด้วย
 
-### This machine (every project)
+**อยากใช้ทุกโปรเจกต์บนเครื่องนี้** ไม่ต้องติดตั้งทีละอัน:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash -s -- --global
 ```
 
-Copies into `~/.cursor/` and `~/.claude/`. No per-repo commit needed.
+## ใช้ยังไง
 
-### Already cloned
+1. เปิดแชทใหม่ใน Cursor
+2. พิมพ์ `@asuna` แล้วบอกว่าอยากได้อะไร
+
+```
+@asuna เพิ่ม test หน้า login
+@asuna วางแผนเคสจากลิสต์นี้
+@asuna ทำไมเทสนี้ fail
+@asuna รันเทสไฟล์นี้ให้หน่อย
+@asuna ตรวจว่าเทสที่เพิ่งเขียนถูก convention ไหม
+```
+
+| อยากได้ | พิมพ์ประมาณนี้ |
+|--------|----------------|
+| เขียน / แก้เทส | `@asuna เพิ่ม test …` |
+| วางแผนก่อนลงมือ | `@asuna plan coverage …` |
+| เทสแดง / flaky | `@asuna ทำไมเคสนี้ fail` |
+| รันเทส | `@asuna รันเทส` |
+| ตรวจ PR / diff | `@asuna ตรวจเทสนี้` |
+
+ใช้ได้ทั้งภาษาไทยและอังกฤษ
+
+## สิ่งที่ Asuna จะทำ
+
+- ดูว่าโปรเจกต์เป็น Playwright, Vitest หรือทั้งสอง
+- อ่านหน้าจอ / ฟังก์ชันจริงก่อนเขียนเทส
+- เขียนให้เหมือนไฟล์เทสข้าง ๆ
+- รันเทสให้ แล้วบอกผลตามที่รันจริง
+
+ถ้าในโค้ดหาคำตอบไม่เจอ Asuna จะถาม ไม่เดา
+
+## ตัวเลือกเพิ่มเติม
+
+ทับไฟล์เดิม:
 
 ```bash
-./install.sh /path/to/your-project
+curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash -s -- --force
+```
+
+โปรเจกต์ยังไม่มี Playwright อยากได้โครง POM พร้อมใช้:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash -s -- --templates
+```
+
+มี clone อยู่แล้ว:
+
+```bash
+./install.sh .
 ./install.sh --global
 ```
-
-Existing files are skipped. Add `--force` to overwrite. Add `--templates` on a project install to also drop a Playwright 2-layer POM scaffold (skipped if `e2e/` already exists).
-
-### Skills CLI (skills only)
-
-```bash
-npx skills add memospeam/asuna --all -y
-npx skills add memospeam/asuna --all -g -y   # user-wide
-```
-
-This installs the skills, not the `@asuna` agent file. Prefer `install.sh` if you want both.
-
-## After install
-
-In Cursor, start a new chat and mention **asuna** (or `@asuna`):
-
-```
-@asuna เพิ่ม test สำหรับหน้า login
-@asuna plan coverage จากลิสต์นี้
-@asuna ทำไมเคสนี้ fail
-```
-
-| Skill | Use when |
-|-------|----------|
-| `asuna-tests` | Add or edit tests |
-| `asuna-plan` | Plan coverage before coding |
-| `asuna-iterate` | Run cases one by one |
-| `asuna-debug` | A test is red or flaky |
-| `asuna-review` | Review a test diff / PR |
-| `asuna-run` | Run the suite |
-
-## How Asuna picks a stack
-
-It reads the **host** project. Nothing here is Pokémon- or SET-specific.
-
-1. `playwright.config.*` or `e2e/` → Playwright POM
-2. `vitest.config.*` or colocated `*.test.ts` → Vitest
-3. Both → follow what you asked for; otherwise copy the neighbouring test
-
-Core rule: **ห้ามคาดเดา** — read the implementation and sibling tests before writing. If source does not answer, ask.
-
-## Layout
-
-```
-agents/asuna.md              # Cursor + Claude agent
-skills/asuna-tests/          # conventions + workflow
-skills/asuna-plan/
-skills/asuna-iterate/
-skills/asuna-debug/
-skills/asuna-review/
-skills/asuna-run/
-templates/playwright/        # optional POM starter
-install.sh
-```
-
-Host-project specifics (routes, helpers, APIs) stay in the host repo.

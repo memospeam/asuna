@@ -157,7 +157,9 @@ if [[ "$GLOBAL" -eq 1 ]]; then
   echo "Installing Asuna for this user"
   install_into "${HOME}/.cursor/agents" "${HOME}/.cursor/skills"
   install_into "${HOME}/.claude/agents" "${HOME}/.claude/skills"
-  echo "Done. Open a new Cursor chat and mention asuna (or @asuna)."
+  echo
+  echo "เสร็จแล้ว — เปิดแชทใหม่ใน Cursor แล้วพิมพ์:"
+  echo "  @asuna เพิ่ม test หน้า login"
   exit 0
 fi
 
@@ -180,5 +182,7 @@ if [[ "$TEMPLATES" -eq 1 ]]; then
   fi
 fi
 
-echo "Done. Commit .cursor/ and .claude/ so teammates get Asuna."
-echo "In Cursor, mention asuna (or @asuna) to write tests."
+echo
+echo "เสร็จแล้ว — commit โฟลเดอร์ .cursor/ และ .claude/ เพื่อให้ทีมใช้ด้วย"
+echo "เปิดแชทใหม่ใน Cursor แล้วพิมพ์:"
+echo "  @asuna เพิ่ม test หน้า login"
