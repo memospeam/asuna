@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install Asuna into a project, or globally for this user.
-# Works from a clone, or piped from GitHub:
+# Install Asuna for Claude Code (default). Add --cursor if you also use Cursor.
 #   curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash
 #   curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash -s -- --global
 
@@ -11,32 +10,34 @@ ASUNA_REF="${ASUNA_REF:-main}"
 
 usage() {
   cat <<EOF
-Install Asuna (SDET agent + skills) for Cursor and Claude Code.
+Install Asuna (SDET agent + skills) for Claude Code.
 
 Usage:
   $(basename "$0") [options] [TARGET_DIR]
 
 Options:
   --global      install for this user (all projects)
+  --cursor      also install Cursor copies (.cursor/)
   --force       overwrite existing files
   --templates   copy Playwright POM scaffold (project install only)
   -h, --help    show this help
 
 Examples:
-  # this project (run from the project root)
+  # this project (Claude Code)
   curl -fsSL https://raw.githubusercontent.com/${ASUNA_REPO}/${ASUNA_REF}/install.sh | bash
 
   # every project on this machine
   curl -fsSL https://raw.githubusercontent.com/${ASUNA_REPO}/${ASUNA_REF}/install.sh | bash -s -- --global
 
-  # from a local clone
-  ./install.sh /path/to/your-project
+  # Claude Code + Cursor
+  curl -fsSL https://raw.githubusercontent.com/${ASUNA_REPO}/${ASUNA_REF}/install.sh | bash -s -- --cursor
 EOF
 }
 
 FORCE=0
 TEMPLATES=0
 GLOBAL=0
+WITH_CURSOR=0
 TARGET=""
 
 while [[ $# -gt 0 ]]; do
@@ -44,6 +45,7 @@ while [[ $# -gt 0 ]]; do
     --force) FORCE=1; shift ;;
     --templates) TEMPLATES=1; shift ;;
     --global|-g) GLOBAL=1; shift ;;
+    --cursor) WITH_CURSOR=1; shift ;;
     -h|--help) usage; exit 0 ;;
     --) shift; break ;;
     -*)
@@ -153,13 +155,26 @@ install_into() {
   done < <(find "$ROOT/skills" -type f -print0)
 }
 
-if [[ "$GLOBAL" -eq 1 ]]; then
-  echo "Installing Asuna for this user"
-  install_into "${HOME}/.cursor/agents" "${HOME}/.cursor/skills"
-  install_into "${HOME}/.claude/agents" "${HOME}/.claude/skills"
+print_done() {
+  local commit_hint="$1"
   echo
-  echo "เสร็จแล้ว — เปิดแชทใหม่ใน Cursor แล้วพิมพ์:"
+  if [[ -n "$commit_hint" ]]; then
+    echo "เสร็จแล้ว — commit โฟลเดอร์ ${commit_hint} เพื่อให้ทีมใช้ด้วย"
+  else
+    echo "เสร็จแล้ว"
+  fi
+  echo "เปิดแชทใหม่ใน Claude Code แล้วพิมพ์:"
   echo "  @asuna เพิ่ม test หน้า login"
+}
+
+if [[ "$GLOBAL" -eq 1 ]]; then
+  echo "Installing Asuna for this user (Claude Code)"
+  install_into "${HOME}/.claude/agents" "${HOME}/.claude/skills"
+  if [[ "$WITH_CURSOR" -eq 1 ]]; then
+    echo "Also installing Cursor copies"
+    install_into "${HOME}/.cursor/agents" "${HOME}/.cursor/skills"
+  fi
+  print_done ""
   exit 0
 fi
 
@@ -169,9 +184,14 @@ if [[ ! -d "$TARGET" ]]; then
 fi
 TARGET="$(cd "$TARGET" && pwd)"
 
-echo "Installing Asuna into $TARGET"
-install_into "$TARGET/.cursor/agents" "$TARGET/.cursor/skills"
+echo "Installing Asuna into $TARGET (Claude Code)"
 install_into "$TARGET/.claude/agents" "$TARGET/.claude/skills"
+COMMIT=".claude/"
+if [[ "$WITH_CURSOR" -eq 1 ]]; then
+  echo "Also installing Cursor copies"
+  install_into "$TARGET/.cursor/agents" "$TARGET/.cursor/skills"
+  COMMIT=".claude/ และ .cursor/"
+fi
 
 if [[ "$TEMPLATES" -eq 1 ]]; then
   if [[ -e "$TARGET/e2e" && "$FORCE" -eq 0 ]]; then
@@ -182,7 +202,4 @@ if [[ "$TEMPLATES" -eq 1 ]]; then
   fi
 fi
 
-echo
-echo "เสร็จแล้ว — commit โฟลเดอร์ .cursor/ และ .claude/ เพื่อให้ทีมใช้ด้วย"
-echo "เปิดแชทใหม่ใน Cursor แล้วพิมพ์:"
-echo "  @asuna เพิ่ม test หน้า login"
+print_done "$COMMIT"

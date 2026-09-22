@@ -1,8 +1,10 @@
 # Asuna
 
-ช่วยเขียนเทสใน Cursor / Claude Code ให้โปรเจกต์ที่ใช้ **Playwright** หรือ **Vitest**
+ช่วยเขียนเทสใน **Claude Code** ให้โปรเจกต์ที่ใช้ Playwright หรือ Vitest
 
 อ่านโค้ดกับเทสที่มีอยู่แล้ว แล้วเขียนตามสไตล์นั้น ไม่เดา ไม่สร้าง framework ใหม่
+
+ไม่ต้องมี `.cursor/` — ค่าเริ่มต้นติดตั้งเฉพาะ Claude Code
 
 ## ติดตั้ง
 
@@ -12,7 +14,7 @@
 curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash
 ```
 
-เสร็จแล้ว commit โฟลเดอร์ `.cursor/` กับ `.claude/` เพื่อให้คนในทีมได้ใช้ด้วย
+เสร็จแล้ว commit โฟลเดอร์ `.claude/` เพื่อให้คนในทีมได้ใช้ด้วย
 
 **อยากใช้ทุกโปรเจกต์บนเครื่องนี้** ไม่ต้องติดตั้งทีละอัน:
 
@@ -22,7 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | b
 
 ## ใช้ยังไง
 
-1. เปิดแชทใหม่ใน Cursor
+1. เปิดแชทใหม่ใน Claude Code
 2. พิมพ์ `@asuna` แล้วบอกว่าอยากได้อะไร
 
 ```
@@ -53,6 +55,12 @@ curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | b
 ถ้าในโค้ดหาคำตอบไม่เจอ Asuna จะถาม ไม่เดา
 
 ## ตัวเลือกเพิ่มเติม
+
+ใช้ Cursor ด้วย (จะได้โฟลเดอร์ `.cursor/` เพิ่ม):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/memospeam/asuna/main/install.sh | bash -s -- --cursor
+```
 
 ทับไฟล์เดิม:
 
